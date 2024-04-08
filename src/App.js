@@ -21,8 +21,18 @@ function App() {
         .getUserMedia({ video: true, audio: false })
         .then((stream) => {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
-          setLoaded(true);
+          
+          var playPromise = videoRef.current.play();;
+          if (playPromise !== undefined) {
+            playPromise.then(_ => {
+              setLoaded(true);
+            })
+            .catch(error => {
+              // Auto-play was prevented
+              // Show paused UI.
+            });
+          }
+          
         });
     });
   }, []);
@@ -47,14 +57,14 @@ function App() {
 
   return (
     <div className="container">
-      {/* <Vortex
+      <div
         type="Watch"
         color="#00BFFF"
         height={200}
         width={200}
         visible={!loaded}
         style={{display:'flex', justifyContent:'center', marginTop:'30px' }}
-      /> */}
+      />
       <div className="upper">
         <div className="capture">
           <video
